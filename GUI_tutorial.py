@@ -12,9 +12,31 @@ import tkinter as tk
 # button.pack()
 # window2.mainloop()
 
-window3 = tk.Tk()
-label = tk.Label(text = "Name")
-entry = tk.Entry()
-label.pack()
-entry.pack()
-window3.mainloop()
+# window3 = tk.Tk()
+# label = tk.Label(text = "Name")
+# entry = tk.Entry()
+# label.pack()
+# entry.pack()
+# window3.mainloop()
+
+# window4 = tk.Tk()
+# label = tk.Label(text = "This is a text widget!",height = 2, width = 25)
+# text = tk.Text()
+# text.pack()
+# label.pack()
+# window4.mainloop()
+
+window5 = tk.Tk()
+frame_a = tk.Frame()
+frame_b = tk.Frame()
+
+label_a = tk.Label(master = frame_a, text = "I'm in Frame A!")
+label_a.pack()
+
+label_b = tk.Label(master = frame_b, text = "I'm in Frame B!")
+label_b.pack()
+
+frame_a.pack()
+frame_b.pack()
+
+window5.mainloop()
