@@ -106,18 +106,78 @@
 
 # window9.mainloop()
 
+# import tkinter as tk
+
+# window10 = tk.Tk()
+
+# for i in range(3):
+#     window10.columnconfigure(i, weight = 1, minsize = 100)
+#     window10.rowconfigure(i, weight = 1, minsize = 100)
+#     for j in range(3):
+#         frame = tk.Frame(
+#             master = window10,
+#             relief = tk.RAISED,
+#             borderwidth = 2
+#         )
+#         frame.grid(row = i, column = j, padx = 5, pady = 5)
+#         label = tk.Label(master = frame, text = f"Row {i} \nColumn {j}")
+#         label.pack(padx = 5, pady = 5)
+# window10.mainloop()
+
+# import tkinter as tk
+
+# window11 = tk.Tk()
+# window11.columnconfigure(0,minsize = 250)
+# window11.rowconfigure([0,1], minsize = 100)
+
+# lbl1 = tk.Label(text = "A")
+# lbl1.grid(row=0, column = 0, sticky = "n")
+
+# lbl2 = tk.Label(text = "B")
+# lbl2.grid(row = 1, column = 0, sticky = "sw")
+
+# window11.mainloop()
+
+# from tkinter import *
+# from tkinter import ttk
+# root = Tk()
+# l =ttk.Label(root, text="Starting...")
+# l.grid()
+# l.bind('<Enter>', lambda e: l.configure(text='Moved mouse inside'))
+# l.bind('<Leave>', lambda e: l.configure(text='Moved mouse outside'))
+# l.bind('<ButtonPress-1>', lambda e: l.configure(text='Clicked left mouse button'))
+# l.bind('<3>', lambda e: l.configure(text='Clicked right mouse button'))
+# l.bind('<Double-1>', lambda e: l.configure(text='Double clicked'))
+# l.bind('<B3-Motion>', lambda e: l.configure(text='right button drag to %d,%d' % (e.x, e.y)))
+# root.mainloop()
+
 import tkinter as tk
 
-window10 = tk.Tk()
+form_criteria = [
+    "First Name:",
+    "Last Name:",
+    "Address Line 1:",
+    "Address Line 2:",
+    "City:",
+    "State/Province:",
+    "Postal Code:",
+    "Country:"
+]
 
-for i in range(3):
-    for j in range(3):
-        frame = tk.Frame(
-            master = window10,
-            relief = tk.RAISED,
-            borderwidth = 2
-        )
-        frame.grid(row = i, column = j)
-        label = tk.Label(master = frame, text = f"Row {i} \nColumn {j}")
-        label.pack()
-window10.mainloop()
+win = tk.Tk()
+win.columnconfigure([0,1,2,3], minsize = 100, weight = 1)
+# win.rowconfigure(0, minsize = 100, weight = 1)
+win.title("Address Entry Form")
+
+for index, criteria in enumerate(form_criteria):
+    frm_criteria = tk.Frame(master = win)
+    frm_criteria.grid(row = index, column = 0, sticky = 'e')
+    lbl_criteria = tk.Label(master = frm_criteria, text = criteria)
+    lbl_criteria.pack()
+    frm_ent_criteria = tk.Frame(master = win)
+    frm_ent_criteria.grid(row = index, column = 1)
+    ent_criteria = tk.Entry(master = frm_ent_criteria)
+    ent_criteria.pack()
+win.mainloop()
+
+
