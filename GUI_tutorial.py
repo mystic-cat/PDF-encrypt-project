@@ -152,32 +152,70 @@
 # root.mainloop()
 
 import tkinter as tk
-
-form_criteria = [
-    "First Name:",
-    "Last Name:",
-    "Address Line 1:",
-    "Address Line 2:",
-    "City:",
-    "State/Province:",
-    "Postal Code:",
-    "Country:"
-]
+from tkinter import ttk
 
 win = tk.Tk()
-win.columnconfigure([0,1,2,3], minsize = 100, weight = 1)
-# win.rowconfigure(0, minsize = 100, weight = 1)
-win.title("Address Entry Form")
 
-for index, criteria in enumerate(form_criteria):
-    frm_criteria = tk.Frame(master = win)
-    frm_criteria.grid(row = index, column = 0, sticky = 'e')
-    lbl_criteria = tk.Label(master = frm_criteria, text = criteria)
-    lbl_criteria.pack()
-    frm_ent_criteria = tk.Frame(master = win)
-    frm_ent_criteria.grid(row = index, column = 1)
-    ent_criteria = tk.Entry(master = frm_ent_criteria)
-    ent_criteria.pack()
+win.title("Python GUI")
+win.resizable(False, False)
+
+a_label = ttk.Label(win, text = "Please Enter your name and press the button")
+a_label.grid(column = 0, row = 0)
+def click_me():
+    action.configure(text = "Hello" + ' ' + name.get())
+    a_label.configure(foreground = 'red', text = 'Thank you')
+
+name = tk.StringVar()
+
+name_entered = ttk.Entry(win, width = 12, textvariable = name)
+name_entered.grid(column = 0, row = 1)
+
+action = ttk.Button(win, text = "Click me!", command = click_me)
+action.grid(column = 1, row = 1)
+name_entered.focus()
+
 win.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""GUI Challenge"""
+# import tkinter as tk
+
+# form_criteria = [
+#     "First Name:",
+#     "Last Name:",
+#     "Address Line 1:",
+#     "Address Line 2:",
+#     "City:",
+#     "State/Province:",
+#     "Postal Code:",
+#     "Country:"
+# ]
+
+# win = tk.Tk()
+# win.columnconfigure([0,1,2,3], minsize = 100, weight = 1)
+# # win.rowconfigure(0, minsize = 100, weight = 1)
+# win.title("Address Entry Form")
+
+# for index, criteria in enumerate(form_criteria):
+#     frm_criteria = tk.Frame(master = win)
+#     frm_criteria.grid(row = index, column = 0, sticky = 'e')
+#     lbl_criteria = tk.Label(master = frm_criteria, text = criteria)
+#     lbl_criteria.pack()
+#     frm_ent_criteria = tk.Frame(master = win)
+#     frm_ent_criteria.grid(row = index, column = 1)
+#     ent_criteria = tk.Entry(master = frm_ent_criteria, width = 20)
+#     ent_criteria.pack()
+# win.mainloop()
 
 
