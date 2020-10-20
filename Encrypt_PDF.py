@@ -40,12 +40,15 @@ class Encrypt:
 
     def _file_check(self):   #If no file was selected before pushing encrypt button
         if self.original_path == None:  
-            msg.showerror("Error", "Please choose a PDF file that you want to Encrypt\nOption:1")
-    # def _password_check(self):  #Checks to make sure that a valid password was entered
+            return msg.showerror("Error", "Please choose a PDF file that you want to Encrypt\nOption:1")
+    # def _password_check(self):  
 
+    def _password_check(self):  #Checks to make sure that a valid password was entered
+        if self.password == "":
+            return msg.showerror("Error", "Please enter a password to Encrypt")
 
-
-
+    def _output_select(self):   #Will create an output folder if non is present or save to user selected folder
+        
 """
 **************************************Encryption Ends*************************************
 """
