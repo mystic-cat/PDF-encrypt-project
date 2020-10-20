@@ -1,5 +1,5 @@
 import tkinter as tk    
-from tkinter.filedialog import askopenfilename, asksaveasfilename
+from tkinter.filedialog import askopenfilename, askdirectory
 from tkinter import ttk
 from tkinter import Menu
 from tkinter import messagebox as msg
@@ -7,6 +7,8 @@ import os
 import pikepdf
 from pikepdf import Pdf
 
+original_path = os.getcwd()
+radSel = 0
 def _quit():    #quits the application
     win.quit()
     win.destroy()
@@ -16,6 +18,7 @@ def _about_msg_box():   #displays the about message box
     msg.showinfo("About","Created by Jared Letts\n Version 0.5")
 
 def _get_filename():
+    global original_path
     original_path = askopenfilename(initialdir = "/", title = "Select PDF to Encrypt", filetypes = (("PDF files","*.pdf"),("all files","*.*"))) # show an "Open" dialog box and return the path to the selected file
     if original_path.endswith(".pdf") or original_path.endswith(".PDF"):
         return original_path
@@ -24,19 +27,20 @@ def _get_filename():
     else:
         msg.showerror("Error", "Please choose a PDF file\nThey end in .pdf")
         
-
+def rad_select():
+    radSel = radVar.get()
+    return radSel
 """
 **************************************Encryption Begins***********************************
 """
 class Encrypt:
-    def __init__(self,original_path, password, output_location):
+    def __init__(self,original_path, password, rad_select):
         self.original_path = original_path
         self.password = password
-        self.output_location = output_location
+        self.rad_select = rad_select
         self._file_check()
         self._password_check()
-        self._output_select()
-        self._encryption()
+        self._encryption(Encrypt._output_select)
 
     def _file_check(self):   #If no file was selected before pushing encrypt button
         if self.original_path == None:  
@@ -45,10 +49,31 @@ class Encrypt:
 
     def _password_check(self):  #Checks to make sure that a valid password was entered
         if self.password == "":
-            return msg.showerror("Error", "Please enter a password to Encrypt")
+            return msg.showerror("Error", "Please enter a password!")
 
     def _output_select(self):   #Will create an output folder if non is present or save to user selected folder
-        
+        if self.rad_select == 1:    #Default Location
+            if os.path.isdir("./Encrypted_Files"):
+                 return "./Encrypted_Files"
+            else:
+                path = "./Encrypted_Files"
+                try:
+                    os.mkdir(path)
+                except OSError:
+                    msg.showerror("Error", "Cannot create %s folder" % path)
+                    quit()
+                return path
+        elif self.rad_select == 2:
+            path = askdirectory(mustexist = True)
+            return path
+
+    def _encryption(self, _output_select):
+        output_dir = self._output_select()
+        pdf = Pdf.open(self.original_path)
+        pdf.save(os.path.splitext(output_dir)[0] + '_encrypted.pdf',
+                encryption = pikepdf.Encryption(owner = password, user = password, R = 6))
+        pdf.close()
+        return
 """
 **************************************Encryption Ends*************************************
 """
@@ -122,22 +147,25 @@ frm_pass = ttk.Labelframe(master, text = "2")   # Frame 2
 frm_pass.grid(column = 1, row = 0, padx = 10, pady = 2, ipadx = 2, ipady = 8)
 lbl_pass = ttk.Label(frm_pass, text = "Set Password:")
 lbl_pass.grid(column = 0, row = 0, sticky = "w")
-entr_pass = ttk.Entry(frm_pass)
+password = tk.StringVar()
+entr_pass = ttk.Entry(frm_pass, textvariable = password)
 entr_pass.grid(column = 0, row = 1, padx = 8, pady = 10, sticky = "w")
 entr_pass.focus()   #Place cursor into password entry line when the app starts
 ToolTip(frm_pass, "Please enter the password that you \nwould like to have on the encrypted PDF")  # Tool tip
 
 frm_output = ttk.Labelframe(master, text = "3") # Frame 3
 frm_output.grid(column = 2, row = 0, padx = 8, pady = 10, ipadx = 2, ipady = 13)
-rad_output_default = ttk.Radiobutton(frm_output, text = "Save copy to default folder")
+radVar = tk.IntVar()
+rad_output_default = ttk.Radiobutton(frm_output, text = "Save copy to default folder", variable = radVar, value = 1, command = rad_select)
 rad_output_default.grid(column = 0, row = 0, sticky = "sw", pady = 6)
-rad_output_choose = ttk.Radiobutton(frm_output, text = "Save copy to a different folder")
+rad_output_default.focus()
+rad_output_choose = ttk.Radiobutton(frm_output, text = "Save copy to a different folder", variable = radVar, value = 2, command = rad_select)
 rad_output_choose.grid(column = 0, row = 1, sticky = "sw")
 ToolTip(frm_output, "Please indicate whether you would like the option to choose where the copied encrypted file is saved") # Tool tip
 
 frm_encrypt = ttk.LabelFrame(master, text = "4")    #Frame 4
 frm_encrypt.grid(column = 3, row = 0, padx = 8, pady = 10)
-btn_encrypt = ttk.Button(frm_encrypt, text = "\nEncrypt\n")
+btn_encrypt = ttk.Button(frm_encrypt, text = "\nEncrypt\n", command = Encrypt(original_path, password, radSel))
 btn_encrypt.pack(padx = 10, pady = 12)
 ToolTip(frm_encrypt, "Press this to begin encryption")  # Tool tip
 
