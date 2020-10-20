@@ -3,24 +3,53 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter import ttk
 from tkinter import Menu
 from tkinter import messagebox as msg
-# filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+import os
+import pikepdf
+from pikepdf import Pdf
 
-
-def _quit():
+def _quit():    #quits the application
     win.quit()
     win.destroy()
     exit()
 
-def _about_msg_box():
+def _about_msg_box():   #displays the about message box
     msg.showinfo("About","Created by Jared Letts\n Version 0.5")
 
+def _get_filename():
+    original_path = askopenfilename(initialdir = "/", title = "Select PDF to Encrypt", filetypes = (("PDF files","*.pdf"),("all files","*.*"))) # show an "Open" dialog box and return the path to the selected file
+    if original_path.endswith(".pdf") or original_path.endswith(".PDF"):
+        return original_path
+    elif original_path == "":
+        return None
+    else:
+        msg.showerror("Error", "Please choose a PDF file\nThey end in .pdf")
+        
 
-
-
-
-""" 
-***************************GUI Begins*********************
 """
+**************************************Encryption Begins***********************************
+"""
+class Encrypt:
+    def __init__(self,original_path, password, output_location):
+        self.original_path = original_path
+        self.password = password
+        self.output_location = output_location
+        self._file_check()
+        self._password_check()
+        self._output_select()
+        self._encryption()
+
+    def _file_check(self):   #If no file was selected before pushing encrypt button
+        if self.original_path == None:  
+            msg.showerror("Error", "Please choose a PDF file that you want to Encrypt\nOption:1")
+    # def _password_check(self):  #Checks to make sure that a valid password was entered
+
+
+
+
+"""
+**************************************Encryption Ends*************************************
+"""
+
 """
 ***************************************Tool Tips Begins***********************************
 """
@@ -59,7 +88,10 @@ class ToolTip(object):
 """
 ***************************************Tool Tips Ends***********************************
 """
-win = tk.Tk()
+""" 
+*****************************************GUI Begins*************************************
+"""
+win = tk.Tk()   #Initialization of the GUI window
 win.title("PDF Encryptor")
 win.resizable(False, False)
 
@@ -79,9 +111,9 @@ master.grid(column = 0, row = 0, padx = 8, pady = 4)
 
 frm_choose = ttk.Labelframe(master, text = "1") # Frame 1
 frm_choose.grid(column = 0, row = 0, padx = 10, pady = 20)
-btn_choose = ttk.Button(frm_choose, text = "\n Choose PDF file to encrypt \n")
+btn_choose = ttk.Button(frm_choose, text = "\n Choose PDF file to encrypt \n", command = _get_filename)
 btn_choose.pack(padx = 10, pady = 10)
-ToolTip(btn_choose, "Select the PDF file that you would like to encrypt")  # Tool tip
+ToolTip(frm_choose, "Select the PDF file that you would like to encrypt")  # Tool tip
 
 frm_pass = ttk.Labelframe(master, text = "2")   # Frame 2
 frm_pass.grid(column = 1, row = 0, padx = 10, pady = 2, ipadx = 2, ipady = 8)
@@ -90,7 +122,7 @@ lbl_pass.grid(column = 0, row = 0, sticky = "w")
 entr_pass = ttk.Entry(frm_pass)
 entr_pass.grid(column = 0, row = 1, padx = 8, pady = 10, sticky = "w")
 entr_pass.focus()   #Place cursor into password entry line when the app starts
-ToolTip(entr_pass, "Please enter the password that you \nwould like to have on the encrypted PDF")  # Tool tip
+ToolTip(frm_pass, "Please enter the password that you \nwould like to have on the encrypted PDF")  # Tool tip
 
 frm_output = ttk.Labelframe(master, text = "3") # Frame 3
 frm_output.grid(column = 2, row = 0, padx = 8, pady = 10, ipadx = 2, ipady = 13)
@@ -104,9 +136,9 @@ frm_encrypt = ttk.LabelFrame(master, text = "4")    #Frame 4
 frm_encrypt.grid(column = 3, row = 0, padx = 8, pady = 10)
 btn_encrypt = ttk.Button(frm_encrypt, text = "\nEncrypt\n")
 btn_encrypt.pack(padx = 10, pady = 12)
-ToolTip(btn_encrypt, "Press this to begin encryption")  # Tool tip
+ToolTip(frm_encrypt, "Press this to begin encryption")  # Tool tip
 
 win.mainloop()
-"""
-***************************GUI Ends*********************
+""" 
+*****************************************GUI Ends*************************************
 """
