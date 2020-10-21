@@ -17,67 +17,63 @@ def _quit():    #quits the application
     exit()
 
 def _about_msg_box():   #displays the about message box
-    msg.showinfo("About","Created by Jared Letts\n Version 0.5")
+    msg.showinfo("About","Created by Jared Letts\n Version 1.0")
 
 def _get_filename():    #Opens a dialog bot asking for the input file
     global original_path
     global input_dir_chosen
-    original_path = askopenfilename(initialdir = "/", title = "Select PDF to Encrypt", filetypes = (("PDF files","*.pdf"),("all files","*.*"))) # show an "Open" dialog box and return the path to the selected file
+    original_path = askopenfilename(initialdir = current_dir, title = "Select PDF to Encrypt", filetypes = (("PDF files","*.pdf"),("all files","*.*"))) # show an "Open" dialog box and return the path to the selected file
     if original_path.endswith(".pdf") or original_path.endswith(".PDF"):
         original_path = original_path
         input_dir_chosen = True
-    elif original_path == "":   #If box is opened but nothing is chosen
-        original_path = False
     else:
         msg.showerror("Error", "Please choose a PDF file\nThey end in .pdf")
         
 def _different_output():    #If the user chooses to save into a different directory than the default
+    global output
     output = askdirectory(initialdir = current_dir)
 
 def _encrypt_btn(): #This is the flow of operations when the Encrypt button is pressed
-    PDF_FILE()._file_check()
-    PDF_FILE()._password_check()
+    global password
+    password = entr_pass.get()
+    _file_check()
+    _password_check()
+    
     rad_sel = radVar.get()
-    if rad_sel == 1:
-        PDF_FILE()._default_output()
-    
+    if rad_sel == 1:    #If a default folder option was chosen
+        _default_output()
+    _protect()
     pass
-"""
-**************************************Encryption Begins***********************************
-"""
-class PDF_FILE:
-    
 
-    def __init__(self):
-        pass
-        
-    
-        
+def _file_check():   #If no file was selected before pushing encrypt button
+    if input_dir_chosen == False:  
+        return msg.showerror("Error", "Please choose a PDF file that you want to Encrypt\nOption:1")
 
-    def _file_check(self):   #If no file was selected before pushing encrypt button
-        if input_dir_chosen == False:  
-            return msg.showerror("Error", "Please choose a PDF file that you want to Encrypt\nOption:1")
+def _password_check():  #Checks to make sure that a valid password was entered
+    if password == "":
+        return msg.showerror("Error", "Please enter a password!")
 
-    def _password_check(self):  #Checks to make sure that a valid password was entered
-        if password == "":
-            return msg.showerror("Error", "Please enter a password!")
-    
-    def _default_output(self):  #Creates a default folder if one does not exist
-        if os.path.isdir(current_dir + '\Encrypted Files'):
-            pass
+def _default_output():  #Creates a default folder if one does not exist
+    global output
+    if os.path.isdir(current_dir + '\Encrypted Files'):
+        output = current_dir + '\Encrypted Files'
+    else:
+        try:
+            os.mkdir(current_dir + '\Encrypted Files')
+        except OSError:
+            return msg.showerror("Error", "Creation of a default folder failed")
         else:
-            try:
-                os.mkdir(current_dir + '\Encrypted Files')
-            except OSError:
-                return msg.showerror("Error", "Creation of a default folder failed")
-            else:
-                output = current_dir + '\Encrypted Files'
+            output = current_dir + '\Encrypted Files'
+            msg.showinfo("", f"Successfully created a new default folder \n{current_dir}\Encrypted Files")
+
+def _protect():
+    new_save_location = os.path.join(output , os.path.split(original_path)[1])
+    original_file = Pdf.open(original_path, password="")
+    original_file.save(os.path.splitext(new_save_location)[0] + "_encrypted.pdf",
+                        encryption = pikepdf.Encryption(owner = password, user = password, R = 6))
+    original_file.close()
     
-    def _encryption(self):
-        pass
-"""
-**************************************Encryption Ends*************************************
-"""
+    
 
 """
 ***************************************Tool Tips Begins***********************************
@@ -148,11 +144,10 @@ frm_pass = ttk.Labelframe(master, text = "2")   # Frame 2 - Password entry
 frm_pass.grid(column = 1, row = 0, padx = 10, pady = 2, ipadx = 2, ipady = 8)
 lbl_pass = ttk.Label(frm_pass, text = "Set Password:")
 lbl_pass.grid(column = 0, row = 0, sticky = "w")
-
 entr_pass = ttk.Entry(frm_pass)
 entr_pass.grid(column = 0, row = 1, padx = 8, pady = 10, sticky = "w")
 entr_pass.focus()   #Place cursor into password entry line when the app starts
-password = entr_pass.get()
+
 ToolTip(frm_pass, "Please enter the password that you \nwould like to have on the encrypted PDF")  # Tool tip
 
 frm_output = ttk.Labelframe(master, text = "3") # Frame 3 - Output Selection
