@@ -17,7 +17,7 @@ def _quit():    #quits the application
     exit()
 
 def _about_msg_box():   #displays the about message box
-    msg.showinfo("About","Created by Jared Letts\n Version 1.0\nOctober, 2020")
+    msg.showinfo("About","Created by Mystic_Cat\n Version 1.0\nOctober, 2020")
 
 def _get_filename():    #Opens a dialog box asking for the input file
     global original_path
