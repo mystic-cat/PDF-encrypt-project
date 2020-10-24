@@ -9,14 +9,14 @@ from pikepdf import Pdf
 
 
 input_dir_chosen = False
-current_dir = os.getcwd()   #Gets current directory
+current_dir = os.getcwd()   
 
 def _quit():    #quits the application
     win.quit()
     win.destroy()
     exit()
 
-def _about_msg_box():   #displays the about message box
+def _about_msg_box():   
     msg.showinfo("About","Created by Mystic_Cat\n Version 1.0\nOctober, 2020")
 
 def _get_filename():    #Opens a dialog box asking for the input file
@@ -132,8 +132,13 @@ menu_bar.add_cascade(label = "File", menu = file_menu)
 help_menu = Menu(menu_bar, tearoff = 0) #Help Menu
 menu_bar.add_cascade(label = "Help", menu = help_menu)
 help_menu.add_command(label = "About", command = _about_msg_box)
-#-----------------------------Outer Frame------------------------------
-master = ttk.Labelframe(win, text = "1 -> 4")   # Master Frame
+#-----------------------------First Tab (Basic Operations)----------------
+tab_control = ttk.Notebook(win)
+tab_one = ttk.Frame(tab_control)
+tab_control.add(tab_one,text = "Basic Operations")
+tab_control.pack(expand = 1, fill = "both")
+#-----------------------------Outer Frame of First Tab------------------------------
+master = ttk.Labelframe(tab_one, text = "1 -> 4")   # Master Frame
 master.grid(column = 0, row = 0, padx = 8, pady = 4)
 #----------------------------Frame 1 (Choose input button)-----------------------
 frm_choose = ttk.Labelframe(master, text = "1") # Frame 1 - Input Selection
@@ -166,5 +171,10 @@ frm_encrypt.grid(column = 3, row = 0, padx = 8, pady = 10)
 btn_encrypt = ttk.Button(frm_encrypt, text = "\nEncrypt\n", command = _encrypt_btn)
 btn_encrypt.pack(padx = 10, pady = 12)
 ToolTip(frm_encrypt, "Press this to begin encryption")  # Tool tip
+#--------------------------------Second Tab (More Options)-------------------------------
+tab_two = ttk.Frame(tab_control)
+tab_control.add(tab_two, text = "More Options")
+
+
 
 win.mainloop()
