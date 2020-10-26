@@ -17,7 +17,7 @@ def _quit():    #quits the application
     exit()
 
 def _about_msg_box():   
-    msg.showinfo("About","Created by Mystic_Cat\n Version 1.0\nOctober, 2020")
+    msg.showinfo("About","Created by mystic_cat\n Version 1.0\nOctober, 2020")
 
 def _get_filename():    #Opens a dialog box asking for the input file
     global original_path
@@ -121,6 +121,7 @@ class ToolTip(object):
 win = tk.Tk()   #Initialization of the GUI window
 win.title("PDF Encryptor")
 win.resizable(False, False)
+win.iconbitmap("Face_logo.ico")
 #-----------------------------Menu Bar-----------------------------
 menu_bar = Menu(win)    #Menu bar configuration
 win.config(menu = menu_bar)
@@ -174,7 +175,8 @@ ToolTip(frm_encrypt, "Press this to begin encryption")  # Tool tip
 #--------------------------------Second Tab (More Options)-------------------------------
 tab_two = ttk.Frame(tab_control)
 tab_control.add(tab_two, text = "More Options")
-
+frm_master_two = ttk.Frame(tab_two)
+frm_master_two.pack()
 
 
 win.mainloop()
