@@ -10,6 +10,7 @@ from pikepdf import Pdf
 
 input_dir_chosen = False
 current_dir = os.getcwd()   
+batch_protect = False
 
 def _quit():    #quits the application
     win.quit()
@@ -25,10 +26,22 @@ def _get_filename():    #Opens a dialog box asking for the input file
     original_path = askopenfilename(initialdir = current_dir, title = "Select PDF to Encrypt", filetypes = (("PDF files","*.pdf"),("all files","*.*"))) # show an "Open" dialog box and return the path to the selected file
     if original_path.endswith(".pdf") or original_path.endswith(".PDF"):
         original_path = original_path
-        input_dir_chosen = True
+        input_dir_chosen = True  
     else:
         msg.showerror("Error", "Please choose a PDF file\nThey end in .pdf")
-        
+
+def _get_folder():
+    global input_dir_chosen
+    global batch_input
+    global batch_protect
+    batch_input = askdirectory(initialdir = current_dir, title = "Select folder where PDFs are contained")
+    if "/" in batch_input:
+        input_dir_chosen = True
+        batch_protect = True
+    else:
+        msg.showerror("Error", "No folder has been chosen for batch protect")
+
+
 def _different_output():    #If the user chooses to save into a different directory than the default
     global output
     output = askdirectory(initialdir = current_dir)
@@ -42,8 +55,7 @@ def _encrypt_btn(): #This is the flow of operations when the Encrypt button is p
     rad_sel = radVar.get()
     if rad_sel == 1:    #If a default folder option was chosen
         _default_output()
-    _protect()  #Encryption process
-    pass
+    _protect()  #Encryption process 
 
 def _file_check():   #If no file was selected before pushing encrypt button
     if input_dir_chosen == False:  
@@ -67,17 +79,22 @@ def _default_output():  #Creates a default folder if one does not exist
             msg.showinfo("", f"Successfully created a new default folder \n{current_dir}\Encrypted Files")
 
 def _protect(): #Selects, opens, then encrypts and saves a copy of the PDF
-    new_save_location = os.path.join(output , os.path.split(original_path)[1])  #The output location
-    try:
-        original_file = Pdf.open(original_path, password="")
-    except FileNotFoundError:
-        return 
+    new_save_location = os.path.join(output , os.path.split(original_path)[1])  
+    if batch_protect == False:
+        try:
+            original_file = Pdf.open(original_path, password="")
+        except FileNotFoundError:
+            return 
+        else:
+            original_file.save(os.path.splitext(new_save_location)[0] + "_encrypted.pdf",
+                            encryption = pikepdf.Encryption(owner = password, user = password, R = 6))
+        original_file.close()
+        return msg.showinfo("Complete", f"You have successfully encrypted {os.path.splitext(new_save_location)[0] + '_encrypted.pdf'}\nWith the password: {password}") 
     else:
-        original_file.save(os.path.splitext(new_save_location)[0] + "_encrypted.pdf",
-                        encryption = pikepdf.Encryption(owner = password, user = password, R = 6))
-    original_file.close()
-    return msg.showinfo("Complete", f"You have successfully encrypted {os.path.splitext(new_save_location)[0] + '_encrypted.pdf'}\nWith the password: {password}") 
-    
+        for folder, subfolders, files in os.walk(batch_input):
+            for file in files:
+                if file.endswith((".pdf", ".PDF")):
+                    pass
 
 """
 ***************************************Tool Tips Begins***********************************
@@ -146,6 +163,8 @@ frm_choose = ttk.Labelframe(master, text = "1") # Frame 1 - Input Selection
 frm_choose.grid(column = 0, row = 0, padx = 10, pady = 20)
 btn_choose = ttk.Button(frm_choose, text = "\n Choose PDF file to encrypt \n", command = _get_filename)
 btn_choose.pack(padx = 10, pady = 10)
+btn_choose_batch = ttk.Button(frm_choose, text = "\nBatch protect\n", command = _get_folder)
+btn_choose_batch.pack(padx = 10, pady = 5)
 ToolTip(frm_choose, "Select the PDF file that you would like to encrypt")  # Tool tip
 #------------------------------Frame 2 (Password entry)---------------------------
 frm_pass = ttk.Labelframe(master, text = "2")   # Frame 2 - Password entry
